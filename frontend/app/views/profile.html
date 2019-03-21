@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="pt-br" ng-app="app">
+
+<head>
+    <title>Sistema de Pedidos</title>
+    <link rel="shortcur icon" href="images/logo.png">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="theme/usebootstrap.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body {
+            padding-top: 10px;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" ng-controller="turmasController">
+
+        <div class="page-header text-center">
+            <h1><!--<span class="fa fa-lock"></span>--> Matrícula </h1>
+            <a href="/logout" class="btn btn-warning">Logout</a>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="well">
+                    <h3><span class="fa fa-user"></span> Aluno </h3>
+
+                    <% if (user.email) { %>
+                    <p>
+                        <strong>matrícula</strong>:
+                        <%= user.matricula %><br>
+                        <!-- <strong>id</strong>: <%= user._id %><br> -->
+                        <strong>email</strong>:
+                        <%= user.email %><br>
+                        <!-- <strong>password</strong>: <%= user.password %> -->
+
+                    </p>
+                    <!-- <a href="/unlink/local" class="btn btn-default">Unlink</a> -->
+                    <% } else { %>
+                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
+                    <% } %>
+                </div>
+            </div>
+            <div class="col-sm-7">
+                <div class="well">
+                    <table class="table table-striped table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th class="ng-binding col-sm-2 text-center">Hora</th>
+                                <th class="ng-binding col-sm-2 text-center">Segunda</th>
+                                <th class="ng-binding col-sm-2 text-center">Terça</th>
+                                <th class="ng-binding col-sm-2 text-center">Quarta</th>
+                                <th class="ng-binding col-sm-2 text-center">Quinta</th>
+                                <th class="ng-binding col-sm-2 text-center">Sexta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>LM</td>
+                                <td>{{matriz[2][1]}}</td>
+                                <td>{{matriz[3][1]}}</td>
+                                <td>{{matriz[4][1]}}</td>
+                                <td>{{matriz[5][1]}}</td>
+                                <td>{{matriz[6][1]}}</td>
+                            </tr>
+                            <tr>
+                                <td>NP</td>
+                                <td>{{matriz[2][2]}}</td>
+                                <td>{{matriz[3][2]}}</td>
+                                <td>{{matriz[4][2]}}</td>
+                                <td>{{matriz[5][2]}}</td>
+                                <td>{{matriz[6][2]}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div ng-show="turmasMatriculadas.length > 0" class="row">
+            <div class="col-sm-12">
+                <div class="well">
+                    <tbody>
+                        <div ng-repeat="turma in turmasMatriculadas track by $index">
+                           {{turma.codCred}} - {{turma.nomeDisciplina}} - {{turma.numeroTurma}}
+                        </div>
+                    </tbody>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th class="ng-binding col-md-3 col-xs-3">Cod Cred</th>
+                    <th class="ng-binding col-md-3 col-xs-3">Nome da disciplina</th>
+                    <th class="ng-binding col-md-2 col-xs-2">Nº da turma</th>
+                    <th class="ng-binding col-md-1 col-xs-1">Nº de vagas</th>
+                    <th class="ng-binding col-md-3 col-xs-3">Horário</th>
+                </tr>
+                <td ng-show="turmas.length === 0">
+                    <label> Nenhuma turma encontrada </label>
+                </td>
+            </thead>
+            <tbody>
+                <tr ng-repeat="turma in turmas track by $index">
+                    <td class="ng-binding col-md-3 col-xs-3">{{turma.codCred}}</td>
+                    <td class="ng-binding col-md-4 col-xs-4">{{turma.nomeDisciplina}}</td>
+                    <td class="ng-binding col-md-1 col-xs-1">{{turma.numeroTurma}}</td>
+                    <td class="ng-binding col-md-1 col-xs-1">{{turma.vagas}}</td>
+                    <td class="ng-binding col-md-3 col-xs-3">{{turma.horario}}</td>
+
+                    <td class="ng-binding col-md-1 col-xs-1">
+                        <md-button ng-show="!turma.matriculado && turma.vagas > 0" ng-click="matricularSe($index, turma)"
+                            class="btn-primary">matricular-se</md-button>
+                        <md-button ng-show="turma.matriculado" ng-click="cancelarMatricula($index, turma)" class="btn-danger">cancelar
+                            matricula</md-button>
+                        <label ng-show="!turma.matriculado && turma.vagas == 0"> Vaga indisponível </label>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- load libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-mask/1.8.7/mask.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-messages.js"></script>
+
+    <!-- Angular Material Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+
+
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script> -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-route.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-resource.min.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    <script src="bootstrap/bootstrap.min.js"></script>
+    <script src="bootstrap/usebootstrap.js"></script>
+
+    <!-- load app main -->
+    <script src="app/app.js"></script>
+
+    <!-- load services -->
+    <script src="app/services/service.js"></script>
+
+    <!-- load controllers -->
+    <script src="app/controllers/disciplinasController.js"></script>
+    <script src="app/controllers/turmasController.js"></script>
+    <script src="app/controllers/historicosController.js"></script>
+    <script src="app/controllers/modalRequisitosDisciplinaController.js"></script>
+
+</body>
+
+</html>
